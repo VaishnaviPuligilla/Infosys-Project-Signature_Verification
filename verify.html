@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Verification</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .verification-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 600px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .result-table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .result-table th, .result-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .result-table th {
+            background-color: #f2f2f2;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <h2>Upload Signature Image for Verification</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="signature_image" accept="image/*" required>
+            <button type="submit">Verify Signature</button>
+        </form>
+
+        {% if result %}
+        <table class="result-table">
+            <tr>
+                <th>Image Name</th>
+                <th>Model</th>
+                <th>Status</th>
+                <th>Confidence</th>
+            </tr>
+            {% for entry in result.previous_results %}
+                {% for model, res in entry.results.items %}
+                <tr>
+                    {% if forloop.first %}
+                    <td rowspan="{{ entry.results|length }}">{{ entry.image_name }}</td>
+                    {% endif %}
+                    <td>{{ model }}</td>
+                    <td>{{ res.status }}</td>
+                    <td>{{ res.confidence }}</td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+</body>
+</html>
