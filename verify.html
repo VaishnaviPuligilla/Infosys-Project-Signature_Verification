@@ -11,6 +11,15 @@
             align-items: center;
             height: 100vh;
             background-color: #f5f5f5;
+            flex-direction: column;
+        }
+        .header, .footer {
+            background-color: #007bff;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 24px;
         }
         .verification-container {
             background-color: #fff;
@@ -19,6 +28,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 600px;
             text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         h2 {
             margin-bottom: 20px;
@@ -56,9 +67,16 @@
             background-color: #f2f2f2;
             color: black;
         }
+        img.signature-image {
+            max-width: 100px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
+    <div class="header">
+        Signature Verification System
+    </div>
     <div class="verification-container">
         <h2>Upload Signature Image for Verification</h2>
         <form method="POST" enctype="multipart/form-data">
@@ -68,27 +86,41 @@
         </form>
 
         {% if result %}
+        <h3>Uploaded Signature Image</h3>
+        <img src="data:image/png;base64,{{ result.previous_results.0.uploaded_image_base64 }}" alt="Uploaded Signature" class="signature-image">
+
         <table class="result-table">
             <tr>
-                <th>Image Name</th>
+                <th>Signature Image</th>
                 <th>Model</th>
                 <th>Status</th>
                 <th>Confidence</th>
+                <th>Session Uploaded At</th>
             </tr>
             {% for entry in result.previous_results %}
-                {% for model, res in entry.results.items %}
-                <tr>
-                    {% if forloop.first %}
-                    <td rowspan="{{ entry.results|length }}">{{ entry.image_name }}</td>
-                    {% endif %}
-                    <td>{{ model }}</td>
-                    <td>{{ res.status }}</td>
-                    <td>{{ res.confidence }}</td>
-                </tr>
-                {% endfor %}
+            <tr>
+                <td rowspan="2"><img src="data:image/png;base64,{{ entry.uploaded_image_base64 }}" alt="Signature" class="signature-image"></td>
+                <td>Model 1</td>
+                <td>{{ entry.results.Model_1.status }}</td>
+                <td>{{ entry.results.Model_1.confidence }}</td>
+                <td rowspan="2">{{ entry.timestamp }}</td>
+            </tr>
+            <tr>
+                <td>Model 2</td>
+                <td>{{ entry.results.Model_2.status }}</td>
+                <td>{{ entry.results.Model_2.confidence }}</td>
+            </tr>
             {% endfor %}
         </table>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" name="clear_previous">Clear Previous Results</button>
+        </form>
         {% endif %}
+    </div>
+    <div class="footer">
+        <!-- Footer content can be added here -->
     </div>
 </body>
 </html>
