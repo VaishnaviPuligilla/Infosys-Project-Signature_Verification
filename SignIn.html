@@ -15,6 +15,15 @@
             align-items: center;
             height: 100vh;
             background-color: #f5f5f5;
+            flex-direction: column;
+        }
+        .header, .footer {
+            background-color: #007bff;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 24px;
         }
         .login-container {
             background-color: #fff;
@@ -23,6 +32,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 300px;
             text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         h2 {
             margin-bottom: 20px;
@@ -51,9 +62,16 @@
         button:hover {
             opacity: 0.9;
         }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
+    <div class="header">
+        Signature Verification System
+    </div>
     <div class="login-container">
         <h2>Signature Verification Login</h2>
         <form method="post">
@@ -63,6 +81,13 @@
             <button type="submit">Signin</button>
             <button type="button" class="signup" onclick="window.location.href='{% url 'signup' %}'">Signup</button>
         </form>
+        {% if error_message %}
+        <div class="error-message">{{ error_message }}</div>
+        <script>alert('{{ error_message }}');</script>
+        {% endif %}
+    </div>
+    <div class="footer">
+        <!-- Optional footer content can go here -->
     </div>
 </body>
 </html>
